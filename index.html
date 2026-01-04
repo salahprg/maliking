@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Girls' Clothes Store</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Girls' Clothes Store</h1>
+            <nav>
+                <a href="#products">Products</a>
+                <a href="#cart">Cart (<span id="cart-count">0</span>)</a>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <section id="products" class="container">
+            <h2>Our Collection</h2>
+            <div class="product-grid">
+                <div class="product-card" data-price="25">
+                    <img src="https://via.placeholder.com/300x400?text=Cute+Dress" alt="Cute Summer Dress">
+                    <h3>Cute Summer Dress</h3>
+                    <p>$25</p>
+                    <button class="btn add-to-cart">Add to Cart</button>
+                </div>
+                <div class="product-card" data-price="30">
+                    <img src="https://via.placeholder.com/300x400?text=Jeans" alt="Stylish Jeans">
+                    <h3>Stylish Jeans</h3>
+                    <p>$30</p>
+                    <button class="btn add-to-cart">Add to Cart</button>
+                </div>
+                <div class="product-card" data-price="20">
+                    <img src="https://via.placeholder.com/300x400?text=T-Shirt" alt="Casual T-Shirt">
+                    <h3>Casual T-Shirt</h3>
+                    <p>$20</p>
+                    <button class="btn add-to-cart">Add to Cart</button>
+                </div>
+                <!-- Add more products as needed -->
+            </div>
+        </section>
+        
+        <section id="cart" class="container">
+            <h2>Your Cart</h2>
+            <ul id="cart-items"></ul>
+            <p class="total">Total: $<span id="total">0</span></p>
+            <button class="btn checkout-btn" id="checkout">Checkout</button>
+        </section>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2023 Girls' Clothes Store. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <script src="script.js"></script>
+</body>
+</html>
