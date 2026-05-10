@@ -1,63 +1,230 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Girls' Clothes Store</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MARBOHA TECH | Boutique Officielle</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root { --apple-blue: #0071e3; --tech-orange: #ff6b00; }
+    body { font-family: 'Montserrat', sans-serif; background: #ffffff; color: #1d1d1f; margin: 0; scroll-behavior: smooth; overflow-x: hidden; }
+
+    /* نظام التنقل */
+    .view { display: none; width: 100%; min-height: 100vh; animation: fadeIn 0.5s ease; }
+    .view.active { display: block !important; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* الهيدر */
+    .apple-nav { 
+      background: rgba(255, 255, 255, 0.85); 
+      backdrop-filter: saturate(180%) blur(20px); 
+      border-bottom: 1px solid rgba(0,0,0,0.05); 
+      position: fixed; top: 0; width: 100%; z-index: 1000; height: 50px; 
+    }
+    .nav-line { height: 2px; width: 100%; background: linear-gradient(90deg, var(--tech-orange), var(--apple-blue), var(--tech-orange)); background-size: 200% 100%; animation: gradFlow 3s linear infinite; }
+    @keyframes gradFlow { 0% { background-position: 100% 0%; } 100% { background-position: -100% 0%; } }
+
+    /* القائمة الجانبية Playlist */
+    #sidebar {
+      position: fixed; top: 0; left: 0; width: 280px; height: 100%; 
+      background: white; z-index: 3000; transform: translateX(-100%);
+      transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 20px 0 50px rgba(0,0,0,0.1); padding: 35px;
+    }
+    #sidebar.open { transform: translateX(0); }
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); backdrop-filter: blur(4px); z-index: 2500; display: none; }
+    .overlay.active { display: block; }
+
+    /* صورة الواجهة الكبيرة */
+    .hero-bg { 
+      background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.4)), 
+                  url('https://i.ibb.co/XfXkYmN/hero-watch-earbuds.jpg'); 
+      background-size: cover; background-position: center; height: 85vh;
+      display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; color: white;
+    }
+
+    /* اللوجو المربع */
+    .logo-box { background: #000; color: #fff; padding: 4px 8px; border-radius: 6px; font-weight: 900; font-size: 14px; }
+
+    /* كروت المنتجات */
+    .product-card {
+      background: #ffffff; border-radius: 20px; padding: 15px; border: 1px solid rgba(0,0,0,0.05);
+      transition: 0.4s; cursor: pointer; position: relative; text-align: left;
+    }
+    .product-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.08); border-color: var(--apple-blue); }
+    .price-tag { position: absolute; top: 12px; right: 12px; background: #000; color: #fff; padding: 4px 10px; border-radius: 10px; font-weight: 800; font-size: 11px; z-index: 10; }
+
+    .btn-apple { background: var(--apple-blue); color: white; border-radius: 50px; padding: 14px 30px; font-weight: 700; font-size: 13px; cursor: pointer; border: none; transition: 0.3s; }
+    #cart-drawer { position: fixed; top: 0; right: 0; width: 100%; max-width: 400px; background: white; z-index: 2000; height: 100%; transform: translateX(100%); transition: 0.4s; box-shadow: -10px 0 30px rgba(0,0,0,0.1); }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Girls' Clothes Store</h1>
-            <nav>
-                <a href="#products">Products</a>
-                <a href="#cart">Cart (<span id="cart-count">0</span>)</a>
-            </nav>
+
+  <div class="overlay" onclick="toggleSidebar(false)"></div>
+  <div id="sidebar">
+    <div class="flex justify-between items-center mb-10">
+        <h3 class="font-black italic uppercase text-xl text-blue-600">Playlist</h3>
+        <button onclick="toggleSidebar(false)" class="text-4xl">&times;</button>
+    </div>
+    <nav class="flex flex-col gap-6">
+        <button onclick="go('home-view'); toggleSidebar(false)" class="text-left font-bold uppercase text-[11px] hover:text-blue-600 transition">Accueil</button>
+        <button onclick="go('support-view'); toggleSidebar(false)" class="text-left font-bold uppercase text-[11px] hover:text-blue-600 transition">Support Client</button>
+        <div class="h-[1px] bg-gray-100 my-4"></div>
+        <p class="text-[9px] font-black text-gray-400 uppercase">WhatsApp VIP</p>
+        <p class="text-xs font-bold text-gray-900">+212 771-737049</p>
+    </nav>
+  </div>
+
+  <nav class="apple-nav">
+    <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between relative">
+      <button onclick="toggleSidebar(true)" class="p-2 hover:bg-gray-100 rounded-full transition">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/><circle cx="5" cy="12" r="1.5"/></svg>
+      </button>
+
+      <div onclick="go('home-view')" class="flex items-center gap-2 cursor-pointer absolute left-1/2 -translate-x-1/2">
+        <span class="logo-box">MT</span>
+        <span class="text-xs font-black italic uppercase tracking-tighter">MARBOHA <span class="text-blue-600">TECH</span></span>
+      </div>
+
+      <button onclick="toggleCart(true)" class="relative p-2">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        <span id="badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center hidden font-bold">0</span>
+      </button>
+    </div>
+    <div class="nav-line"></div>
+  </nav>
+
+  <div id="home-view" class="view active">
+    <section class="hero-bg px-6">
+      <h1 class="font-black italic text-5xl md:text-8xl tracking-tighter mb-4">MARBOHA TECH</h1>
+      <p class="text-white font-bold uppercase text-[10px] tracking-[0.5em]">L'EXCELLENCE SAMSUNG AU MAROC</p>
+      <button onclick="document.getElementById('store').scrollIntoView()" class="btn-apple mt-12 px-12 shadow-2xl">DECOUVRIR</button>
+    </section>
+
+    <div id="store" class="max-w-7xl mx-auto py-24 px-6">
+        <div id="products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-8"></div>
+    </div>
+  </div>
+
+  <div id="details-view" class="view pt-24 px-6 bg-[#f5f5f7]">
+    <div class="max-w-5xl mx-auto bg-white p-8 md:p-16 rounded-[50px] shadow-2xl flex flex-col md:flex-row gap-12 items-center border">
+      <div class="md:w-1/2 bg-gray-50 rounded-3xl p-6">
+          <img id="p-img" src="" class="w-full h-80 object-contain rounded-2xl">
+      </div>
+      <div class="md:w-1/2 text-left">
+        <button onclick="go('home-view')" class="text-blue-600 font-bold text-[10px] mb-8 block uppercase tracking-widest">← BOUTIQUE</button>
+        <h2 id="p-name" class="text-4xl font-black mb-6 italic uppercase leading-tight"></h2>
+        <p id="p-desc" class="text-gray-400 mb-10 font-light leading-relaxed"></p>
+        <span id="p-price" class="text-5xl font-black text-blue-600 block mb-10"></span>
+        <button id="add-btn" class="btn-apple w-full py-5 shadow-xl uppercase">Ajouter au panier</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="support-view" class="view pt-24 px-6">
+    <div class="max-w-4xl mx-auto text-center px-4">
+        <h2 class="text-5xl font-black italic uppercase mb-16 tracking-tighter">Support</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+            <a href="https://wa.me/212771737049" class="p-10 bg-green-50 rounded-[40px] border border-green-100 flex flex-col items-center gap-4 transition hover:scale-105">
+                <span class="text-4xl">💬</span><span class="font-black text-[11px] uppercase tracking-widest">WhatsApp Direct</span>
+            </a>
+            <a href="https://instagram.com/shop._.maroc7" class="p-10 bg-purple-50 rounded-[40px] border border-purple-100 flex flex-col items-center gap-4 transition hover:scale-105">
+                <span class="text-4xl">📸</span><span class="font-black text-[11px] uppercase tracking-widest">Instagram Official</span>
+            </a>
         </div>
-    </header>
-    
-    <main>
-        <section id="products" class="container">
-            <h2>Our Collection</h2>
-            <div class="product-grid">
-                <div class="product-card" data-price="25">
-                    <img src="https://via.placeholder.com/300x400?text=Cute+Dress" alt="Cute Summer Dress">
-                    <h3>Cute Summer Dress</h3>
-                    <p>$25</p>
-                    <button class="btn add-to-cart">Add to Cart</button>
-                </div>
-                <div class="product-card" data-price="30">
-                    <img src="https://via.placeholder.com/300x400?text=Jeans" alt="Stylish Jeans">
-                    <h3>Stylish Jeans</h3>
-                    <p>$30</p>
-                    <button class="btn add-to-cart">Add to Cart</button>
-                </div>
-                <div class="product-card" data-price="20">
-                    <img src="https://via.placeholder.com/300x400?text=T-Shirt" alt="Casual T-Shirt">
-                    <h3>Casual T-Shirt</h3>
-                    <p>$20</p>
-                    <button class="btn add-to-cart">Add to Cart</button>
-                </div>
-                <!-- Add more products as needed -->
-            </div>
-        </section>
-        
-        <section id="cart" class="container">
-            <h2>Your Cart</h2>
-            <ul id="cart-items"></ul>
-            <p class="total">Total: $<span id="total">0</span></p>
-            <button class="btn checkout-btn" id="checkout">Checkout</button>
-        </section>
-    </main>
-    
-    <footer>
-        <div class="container">
-            <p>&copy; 2023 Girls' Clothes Store. All rights reserved.</p>
+        <form id="contact-form" class="bg-gray-50 p-10 rounded-[50px] border text-left space-y-4 max-w-xl mx-auto">
+            <input type="hidden" name="access_key" value="83029047-dab7-46d7-a0fa-cde6ca83dd8b">
+            <h3 class="font-black uppercase italic mb-4">Envoyer un message</h3>
+            <input type="text" name="name" placeholder="Nom" required class="w-full p-4 rounded-xl border-none outline-none ring-1 ring-gray-200 focus:ring-blue-500 text-sm">
+            <input type="email" name="email" placeholder="Email" required class="w-full p-4 rounded-xl border-none outline-none ring-1 ring-gray-200 focus:ring-blue-500 text-sm">
+            <textarea name="message" placeholder="Votre message..." rows="4" required class="w-full p-4 rounded-xl border-none outline-none ring-1 ring-gray-200 focus:ring-blue-500 text-sm resize-none"></textarea>
+            <button type="submit" class="btn-apple w-full py-4 uppercase font-black">Envoyer</button>
+            <p id="form-log" class="text-center font-bold text-blue-600 text-[10px] mt-4 uppercase"></p>
+        </form>
+    </div>
+  </div>
+
+  <div id="cart-drawer">
+    <div class="p-10 flex flex-col h-full">
+        <div class="flex justify-between items-center mb-12"><h3 class="text-2xl font-black uppercase italic">Votre Sac</h3><button onclick="toggleCart(false)" class="text-4xl">&times;</button></div>
+        <div id="cart-items" class="flex-1 space-y-4 overflow-auto"></div>
+        <div class="border-t pt-8 mt-8">
+            <div class="flex justify-between font-black text-2xl mb-10 italic"><span>TOTAL:</span><span id="total-price" class="text-blue-600">0 DH</span></div>
+            <button onclick="checkout()" class="w-full py-6 btn-apple text-xs font-black uppercase shadow-xl">Commander WhatsApp 💬</button>
         </div>
-    </footer>
-    
-    <script src="script.js"></script>
+    </div>
+  </div>
+
+  <script>
+    // روابط صور مستقرة وعالمية لضمان الظهور
+    const productsDB = [
+      { id: 1, name: "Samsung 65W Trio", price: 75, img: "https://i.ibb.co/Xz9R7xY/white65w.jpg", desc: "Chargeur original Samsung 65W PD avec 3 ports. Charge ultra rapide." },
+      { id: 2, name: "Samsung 25W White", price: 50, img: "https://i.ibb.co/YyYhXzQ/white25w.jpg", desc: "Chargeur mural 25W original Samsung (Blanc). Super Fast Charging." },
+      { id: 3, name: "Earbuds Crystal Pink", price: 95, img: "https://i.ibb.co/fNb9V1L/pinkearbuds.jpg", desc: "Design cristal unique, son haute fidélité et affichage LED." },
+      { id: 4, name: "Samsung 25W Black", price: 50, img: "https://i.ibb.co/Xv9C63XF/samsung-25w-black.png", desc: "Version Noir du chargeur 25W original Samsung." }
+    ];
+
+    let cart = [];
+
+    function go(id) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+      window.scrollTo(0,0);
+    }
+
+    function toggleSidebar(s) {
+      document.getElementById('sidebar').classList.toggle('open', s);
+      document.querySelector('.overlay').classList.toggle('active', s);
+    }
+
+    function toggleCart(s) { document.getElementById('cart-drawer').style.transform = s ? 'translateX(0)' : 'translateX(100%)'; }
+
+    function render() {
+      document.getElementById('products-grid').innerHTML = productsDB.map(p => `
+        <div class="product-card" onclick="showP(${p.id})">
+          <div class="price-tag">${p.price} DH</div>
+          <img src="${p.img}" class="w-full h-48 object-contain mb-4 rounded-xl" onerror="this.src='https://placehold.co/400x400/0071e3/ffffff?text=${p.name}'">
+          <h3 class="font-black text-[9px] uppercase italic h-8 overflow-hidden">${p.name}</h3>
+          <p class="text-blue-600 font-bold text-[8px] mt-2 uppercase">Détails</p>
+        </div>`).join('');
+    }
+
+    function showP(id) {
+      const p = productsDB.find(x => x.id === id);
+      document.getElementById('p-name').innerText = p.name;
+      document.getElementById('p-desc').innerText = p.desc;
+      document.getElementById('p-price').innerText = p.price + " DH";
+      document.getElementById('p-img').src = p.img;
+      document.getElementById('add-btn').onclick = () => { cart.push(p); updateCart(); toggleCart(true); };
+      go('details-view');
+    }
+
+    function updateCart() {
+      document.getElementById('badge').innerText = cart.length;
+      document.getElementById('badge').classList.toggle('hidden', cart.length === 0);
+      document.getElementById('total-price').innerText = cart.reduce((s, i) => s + i.price, 0) + " DH";
+      document.getElementById('cart-items').innerHTML = cart.map((item, idx) => `
+        <div class="flex justify-between items-center bg-gray-50 p-4 rounded-2xl border">
+          <button onclick="cart.splice(${idx}, 1); updateCart();" class="text-red-500 font-bold text-2xl px-2">×</button>
+          <div class="text-right font-black text-[10px] uppercase italic">${item.name}</div>
+        </div>`).join('');
+    }
+
+    function checkout() {
+      const msg = encodeURIComponent(`Bonjour MARBOHA TECH, commande :\n` + cart.map(i => `- ${i.name}`).join('\n') + `\nTotal: ${document.getElementById('total-price').innerText}`);
+      window.open(`https://wa.me/212771737049?text=${msg}`);
+    }
+
+    document.getElementById('contact-form').onsubmit = function(e) {
+      e.preventDefault();
+      document.getElementById('form-log').innerText = "Envoi...";
+      fetch('https://api.web3forms.com/submit', { method: 'POST', body: new FormData(this) })
+      .then(r => r.json()).then(d => { if(d.success) { document.getElementById('form-log').innerText = "ENVOYÉ ✅"; this.reset(); } });
+    };
+
+    window.onload = render;
+  </script>
 </body>
 </html>
